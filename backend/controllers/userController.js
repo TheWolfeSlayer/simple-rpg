@@ -8,6 +8,7 @@ const User = require('../models/userModel')
 // @access  Public
 const registerUser = asyncHandler(async (req,res) => {
     const { username, email, password } = req.body
+    console.log(username)
 
     if (!username || !email || !password) {
         res.status(400)
