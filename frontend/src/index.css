@@ -86,28 +86,6 @@ h3 {
   color: #828282;
 }
 
-.goals {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 10px;
-}
-
-.goal {
-  background-color: #f4f4f4;
-  margin: 10px 0;
-  padding: 20px 0 10px;
-  position: relative;
-}
-
-.goal .close {
-  position: absolute;
-  top: 10px;
-  right: 15px;
-  cursor: pointer;
-  border: none;
-  background: none;
-}
-
 .form,
 .content {
   width: 70%;
@@ -212,4 +190,29 @@ h3 {
   .heading p {
     font-size: 1.5rem;
   }
+}
+
+.start-button {
+  width:10vw;
+  height:10vh;
+  font-size: larger;
+  background-color: rgb(9, 255, 1);
+}
+
+.dashboard {
+  display: inline-flex;
+  
+}
+
+.dashboard-header {
+  padding-right: 30px;
+}
+
+.gold-count {
+  background-color: rgb(146, 58, 0);
+  color: white;
+  width: 75px;
+  position: fixed;
+  right: 10vw;
+  border: #000 2px solid;
 }

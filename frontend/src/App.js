@@ -5,6 +5,7 @@ import Navigate from './components/Navigate';
 import Dashboard from './pages/Dashboard';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import Monster from './pages/Monster'
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
             <Route path='/' element={<Dashboard />} />
             <Route path='/login' element={<Login />} />
             <Route path='/register' element={<Register />} />
+            <Route path='/monster' element={<Monster />} />
           </Routes>
         </div>
       </Router>

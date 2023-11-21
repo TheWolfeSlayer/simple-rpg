@@ -15,6 +15,13 @@ const userSchema = mongoose.Schema({
         type: String,
         required: [true, 'Please add a password']
     },
+    gold: {
+        type: Number,
+        required: true
+    },
+    equipment: {
+        type: Array
+    }
 },
 {
     timestamps: true

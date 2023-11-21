@@ -30,7 +30,9 @@ const registerUser = asyncHandler(async (req,res) => {
     const user = await User.create({
         username,
         email,
-        password: hashedPassword
+        password: hashedPassword,
+        gold: 500,
+        equipment: []
     })
 
     if(user) {
@@ -60,6 +62,8 @@ const loginUser = asyncHandler(async (req,res) => {
             _id: user._id,
             username: user.username,
             email: user.email,
+            gold: user.gold,
+            equipment: user.equipment,
             token: generateToken(user._id)
         })
     } else {
