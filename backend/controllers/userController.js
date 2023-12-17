@@ -31,8 +31,10 @@ const registerUser = asyncHandler(async (req,res) => {
         username,
         email,
         password: hashedPassword,
-        gold: 500,
-        equipment: []
+        details: { 
+            MaxHealth: 100,
+            Health: 100
+        }
     })
 
     if(user) {
@@ -62,8 +64,7 @@ const loginUser = asyncHandler(async (req,res) => {
             _id: user._id,
             username: user.username,
             email: user.email,
-            gold: user.gold,
-            equipment: user.equipment,
+            details: user.details,
             token: generateToken(user._id)
         })
     } else {

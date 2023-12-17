@@ -15,13 +15,18 @@ const userSchema = mongoose.Schema({
         type: String,
         required: [true, 'Please add a password']
     },
-    gold: {
-        type: Number,
-        required: true
-    },
-    equipment: {
-        type: Array
+    details : {
+        MaxHealth: { type: Number },
+        Health : { type: Number },
+        Level: { type: Number },
+        Experience: { type: Number },
+        Gold : { type: Number },
+        Sword: { type: String },
+        Armor: { type: String },
+        Area : { type: Number },
+        TimeTravels: { type: Number },
     }
+    
 },
 {
     timestamps: true

@@ -208,11 +208,23 @@ h3 {
   padding-right: 30px;
 }
 
-.gold-count {
+.health {
   background-color: rgb(146, 58, 0);
   color: white;
   width: 75px;
   position: fixed;
   right: 10vw;
   border: #000 2px solid;
+}
+
+.Action-Page {
+  display: flex;
+}
+
+.Actions {
+  flex: 50%;
+}
+
+.Status-Info {
+  flex: 50%;
 }
