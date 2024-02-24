@@ -17,6 +17,11 @@ function Monster() {
   const [trainingText, setTrainingText] = useState("Training");
   const [workText, setWorkText] = useState("Work");
   const [dungeonText, setDungeonText] = useState("Dungeon");
+  let huntCooldown = 60000
+  let adventureCooldown = 3600000
+  let trainingCooldown = 300000
+  let workCooldown = 300000
+  let dungeonCooldown = 43200000
 
   const HuntButton = () => {
     return (
@@ -49,29 +54,29 @@ function Monster() {
   }
 
   const doHunt = () => {
-    setHuntText(<Countdown date={Date.now() + 60000} />);
-    setTimeout(() => setHuntText("Hunt"), [60000])
+    setHuntText(<Countdown date={Date.now() + huntCooldown} />);
+    setTimeout(() => setHuntText("Hunt"), [huntCooldown])
     console.log('Am currently hunting')
   }
 
   const doAdventure = () => {
-    setAdventureText(<Countdown date={Date.now() + 3600000} />);
-    setTimeout(() => setHuntText("Adventure"), [60000])
+    setAdventureText(<Countdown date={Date.now() + adventureCooldown} />);
+    setTimeout(() => setHuntText("Adventure"), [adventureCooldown])
   }
 
   const doTraining = () => {
-    setTrainingText(<Countdown date={Date.now() + 300000} />);
-    setTimeout(() => setTrainingText("Hunt"), [60000])
+    setTrainingText(<Countdown date={Date.now() + trainingCooldown} />);
+    setTimeout(() => setTrainingText("Training"), [trainingCooldown])
   }
 
   const doWork = () => {
-    setWorkText(<Countdown date={Date.now() + 300000} />);
-    setTimeout(() => setWorkText("Hunt"), [60000])
+    setWorkText(<Countdown date={Date.now() + workCooldown} />);
+    setTimeout(() => setWorkText("Work"), [workCooldown])
   }
 
   const doDungeon = () => {
-    setDungeonText(<Countdown date={Date.now() + 43200000} />);
-    setTimeout(() => setDungeonText("Hunt"), [60000])
+    setDungeonText(<Countdown date={Date.now() + dungeonCooldown} />);
+    setTimeout(() => setDungeonText("Dungeon"), [dungeonCooldown])
   }
 
   if(!user){
