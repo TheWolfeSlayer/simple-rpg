@@ -81,6 +81,16 @@ const loginUser = asyncHandler(async (req,res) => {
 
 })
 
+// @desc    Updates user details
+// @route   POST /api/user/details
+// @access  Public
+const updateUser = asyncHandler(async (req,res) => {
+    const { email, details } = req.body
+    console.log(req.body)
+    await User.findOneAndUpdate({ email }, { details })
+
+})
+
 // @desc    Get user data
 // @route   GET /api/user/me
 // @access  Private
@@ -90,7 +100,8 @@ const getMe = asyncHandler(async (req,res) => {
     res.status(200).json({
         id: _id,
         username,
-        email
+        email,
+        details
     })
 })
 
@@ -104,5 +115,6 @@ const generateToken = (id) => {
 module.exports = { 
     registerUser,
     loginUser,
-    getMe
+    getMe,
+    updateUser
 }

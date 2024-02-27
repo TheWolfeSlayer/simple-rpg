@@ -1,19 +1,24 @@
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { Button } from 'react-bootstrap'
 import Countdown from 'react-countdown';
 import { useState, useEffect } from 'react';
+import { update } from '../features/auth/authSlice'
 
 function Monster() {
   const navigate = useNavigate()
+  const dispatch = useDispatch()
   const {user} = useSelector((state) => state.auth)
-
-  useEffect(() => {
-
-  }, [])
   
   const [userHealth, setUserHealth] = useState(user.details.Health)
+  const [userMaxHealth, setUserMaxHealth] = useState(user.details.MaxHealth)
   const [userGold, setUserGold] = useState(user.details.Gold)
+  const [userExperience, setUserExperience] = useState(user.details.Experience)
+  const [userLevel, setUserLevel] = useState(user.details.Level)
+  const [userSword, setUserSword] = useState(user.details.Sword)
+  const [userArmor, setUserArmor] = useState(user.details.Armor)
+  const [userArea, setUserArea] = useState(user.details.Area)
+
   const [huntText, setHuntText] = useState("Hunt");
   const [adventureText, setAdventureText] = useState("Adventure");
   const [trainingText, setTrainingText] = useState("Training");
@@ -32,16 +37,43 @@ function Monster() {
     }
   }
 
+  const updateUserData = () => {
+    const id = user.id
+    const email = user.email
+    const password = user.password
+    const details = {
+      MaxHealth: userMaxHealth,
+      Health: userHealth,
+      Level: userLevel,
+      Experience: userExperience,
+      Gold: userGold,
+      Sword: userSword,
+      Armor: userArmor,
+      Area: userArea
+    }
+    console.log(details)
+    const userData = {
+      id,
+      email,
+      password,
+      details
+    }
+    console.log(userData)
+    dispatch(update(userData))
+  }
+
   const doHunt = () => {
     const hunting = () => {
       setHuntText("Hunt")
       updateStatus(10, 10)
+      updateUserData()
     }
 
     if (huntText === 'Hunt' && userHealth > 0) {
       setHuntText(<Countdown date={Date.now() + huntCooldown} />);
       setTimeout(hunting, [huntCooldown])
       console.log('Am currently hunting')
+      
     }
   }
 
@@ -63,6 +95,13 @@ function Monster() {
   const doDungeon = () => {
     setDungeonText(<Countdown date={Date.now() + dungeonCooldown} />);
     setTimeout(() => setDungeonText("Dungeon"), [dungeonCooldown])
+  }
+
+  const doHeal = () => {
+    if (userGold > 5) {
+      setUserGold(userGold-5)
+      setUserHealth(userMaxHealth)
+    }
   }
 
   const GetHealth = () => {
@@ -93,6 +132,9 @@ function Monster() {
           </div>
           <div className='Dungeon'>
             <Button onClick={doDungeon}> {dungeonText} </Button>
+          </div>
+          <div className='Heal'>
+            <Button onClick={doHeal}> Heal, 5 gold</Button>
           </div>
         </div>
         <div className='Status-Info'>

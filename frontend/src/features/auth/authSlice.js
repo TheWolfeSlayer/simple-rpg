@@ -38,6 +38,15 @@ export const logout = createAsyncThunk('auth/logout', async () => {
     await authService.logout()
 })
 
+// Update user
+export const update = createAsyncThunk('auth/update', async (user, thunkAPI) => {
+    try {
+        return await authService.update(user)
+    } catch (error) {
+        console.log('failed to update slice')
+    }
+})
+
 export const authSlice = createSlice({
     name: 'auth',
     initialState,
