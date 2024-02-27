@@ -2,16 +2,18 @@ import { useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { Button } from 'react-bootstrap'
 import Countdown from 'react-countdown';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 function Monster() {
   const navigate = useNavigate()
   const {user} = useSelector((state) => state.auth)
 
-  const GetHealth = () => {
-    return `${user.details.Health} / ${user.details.MaxHealth}`
-  }
+  useEffect(() => {
 
+  }, [])
+  
+  const [userHealth, setUserHealth] = useState(user.details.Health)
+  const [userGold, setUserGold] = useState(user.details.Gold)
   const [huntText, setHuntText] = useState("Hunt");
   const [adventureText, setAdventureText] = useState("Adventure");
   const [trainingText, setTrainingText] = useState("Training");
@@ -23,40 +25,24 @@ function Monster() {
   let workCooldown = 300000
   let dungeonCooldown = 43200000
 
-  const HuntButton = () => {
-    return (
-      <Button onClick={doHunt}> {huntText} </Button>
-    )
-  }
-
-  const AdventureButton = () => {
-    return (
-      <Button onClick={doAdventure}> {adventureText} </Button>
-    )
-  }
-
-  const TrainingButton = () => {
-    return (
-      <Button onClick={doTraining}> {trainingText} </Button>
-    )
-  }
-
-  const WorkButton = () => {
-    return (
-      <Button onClick={doWork}> {workText} </Button>
-    )
-  }
-
-  const DungeonButton = () => {
-    return (
-      <Button onClick={doDungeon}> {dungeonText} </Button>
-    )
+  const updateStatus = (damage, gold) => {
+    setUserHealth(userHealth - damage)
+    if (userHealth > 0) {
+      setUserGold(userGold + gold)
+    }
   }
 
   const doHunt = () => {
-    setHuntText(<Countdown date={Date.now() + huntCooldown} />);
-    setTimeout(() => setHuntText("Hunt"), [huntCooldown])
-    console.log('Am currently hunting')
+    const hunting = () => {
+      setHuntText("Hunt")
+      updateStatus(10, 10)
+    }
+
+    if (huntText === 'Hunt' && userHealth > 0) {
+      setHuntText(<Countdown date={Date.now() + huntCooldown} />);
+      setTimeout(hunting, [huntCooldown])
+      console.log('Am currently hunting')
+    }
   }
 
   const doAdventure = () => {
@@ -79,6 +65,14 @@ function Monster() {
     setTimeout(() => setDungeonText("Dungeon"), [dungeonCooldown])
   }
 
+  const GetHealth = () => {
+    return `${userHealth} / ${user.details.MaxHealth}`
+  }
+  
+  const GetGold = () => {
+    return `${userGold}`
+  }
+
   if(!user){
     navigate('/')
   } else {
@@ -86,24 +80,27 @@ function Monster() {
       <div className='Action-Page'>
         <div className='Actions'>
           <div className='Hunt'>
-            <HuntButton />
+            <Button onClick={doHunt}> {huntText} </Button>
           </div>
           <div className='Adventure'>
-            <AdventureButton />
+            <Button onClick={doAdventure}> {adventureText} </Button>
           </div>
           <div className='Training'>
-            <TrainingButton />
+            <Button onClick={doTraining}> {trainingText} </Button>
           </div>
           <div className='Work'>
-            <WorkButton />
+            <Button onClick={doWork}> {workText} </Button>
           </div>
           <div className='Dungeon'>
-            <DungeonButton />
+            <Button onClick={doDungeon}> {dungeonText} </Button>
           </div>
         </div>
         <div className='Status-Info'>
           <div className='health'>
             <GetHealth />
+          </div>
+          <div className='gold'>
+            <GetGold />
           </div>
         </div>
       </div>

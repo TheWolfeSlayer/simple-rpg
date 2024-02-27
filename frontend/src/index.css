@@ -37,7 +37,7 @@ h3 {
 
 .container {
   width: 100%;
-  max-width: 960px;
+  max-width: 1800px;
   margin: 0 auto;
   padding: 0 20px;
   text-align: center;
@@ -213,8 +213,17 @@ h3 {
   color: white;
   width: 75px;
   position: fixed;
-  right: 10vw;
+  right: 17vw;
   border: #000 2px solid;
+}
+
+.gold {
+  background-color: rgb(255, 226, 63);
+  border: #000 2px solid;
+  width: 75px;
+  right: 17vw;
+  position: fixed;
+  top: 16vh;
 }
 
 .Action-Page {

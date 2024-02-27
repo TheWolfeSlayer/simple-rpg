@@ -33,7 +33,13 @@ const registerUser = asyncHandler(async (req,res) => {
         password: hashedPassword,
         details: { 
             MaxHealth: 100,
-            Health: 100
+            Health: 100,
+            Level: 1,
+            Experience: 0,
+            Gold : 0,
+            Sword: "none",
+            Armor: "none",
+            Area : 1
         }
     })
 
@@ -42,6 +48,7 @@ const registerUser = asyncHandler(async (req,res) => {
             _id: user._id,
             username: user.username,
             email: user.email,
+            details: user.details,
             token: generateToken(user._id)
         })
     } else {
