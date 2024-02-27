@@ -85,10 +85,19 @@ const loginUser = asyncHandler(async (req,res) => {
 // @route   POST /api/user/details
 // @access  Public
 const updateUser = asyncHandler(async (req,res) => {
+    console.log('updating')
     const { email, details } = req.body
-    console.log(req.body)
     await User.findOneAndUpdate({ email }, { details })
-
+    const user = await User.findOne({email})
+    console.log(user)
+    res.json({
+        _id: user._id,
+        username: user.username,
+        email: user.email,
+        details: user.details,
+        token: generateToken(user._id)
+    })
+    console.log('update done')
 })
 
 // @desc    Get user data

@@ -51,14 +51,12 @@ function Monster() {
       Armor: userArmor,
       Area: userArea
     }
-    console.log(details)
     const userData = {
       id,
       email,
       password,
       details
     }
-    console.log(userData)
     dispatch(update(userData))
   }
 
@@ -70,10 +68,8 @@ function Monster() {
     }
 
     if (huntText === 'Hunt' && userHealth > 0) {
-      setHuntText(<Countdown date={Date.now() + huntCooldown} />);
-      setTimeout(hunting, [huntCooldown])
-      console.log('Am currently hunting')
-      
+      setHuntText(<Countdown date={Date.now() + 500} />);
+      setTimeout(hunting, [500])
     }
   }
 
@@ -98,7 +94,7 @@ function Monster() {
   }
 
   const doHeal = () => {
-    if (userGold > 5) {
+    if (userGold > 5 && userHealth < userMaxHealth) {
       setUserGold(userGold-5)
       setUserHealth(userMaxHealth)
     }

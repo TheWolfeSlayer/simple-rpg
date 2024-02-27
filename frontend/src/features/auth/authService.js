@@ -42,7 +42,7 @@ const update = async (userData) => {
 
         return response.data
     } catch (error) {
-        console.log('failed to update service')
+        console.log('failed to update slice')
     }
     
 }
