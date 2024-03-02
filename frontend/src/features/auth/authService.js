@@ -35,7 +35,6 @@ const logout = () => {
 const update = async (userData) => {
     try {
         const response = await axios.put(UPDATE_API_URL, userData)
-        console.log(response)
         if(response.data) {
             localStorage.setItem('user', JSON.stringify(response.data))
         }

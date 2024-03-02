@@ -211,19 +211,42 @@ h3 {
 .health {
   background-color: rgb(146, 58, 0);
   color: white;
-  width: 75px;
-  position: fixed;
-  right: 17vw;
+  width: 12vw;
+  
   border: #000 2px solid;
 }
 
 .gold {
   background-color: rgb(255, 226, 63);
   border: #000 2px solid;
-  width: 75px;
-  right: 17vw;
-  position: fixed;
-  top: 16vh;
+  width: 12vw;
+  
+}
+
+.experience { 
+  border: #000 2px solid;
+  width: 12vw;
+}
+
+.attack { 
+  border: #000 2px solid;
+  width: 12vw;
+  
+}
+
+.defense {
+  border: #000 2px solid;
+  width: 12vw;
+}
+
+.sword {
+  border: #000 2px solid;
+  width: 12vw;
+}
+
+.armor {
+  border: #000 2px solid;
+  width: 12vw;
 }
 
 .Action-Page {
@@ -234,6 +257,18 @@ h3 {
   flex: 50%;
 }
 
+.Action-Button {
+  width: 30vw;
+  height: 10vh;
+  text-align: center;
+  background-color: #555;
+}
+
+.Action { 
+  padding-bottom: 5px;
+}
+
 .Status-Info {
   flex: 50%;
+  align-content: right;
 }

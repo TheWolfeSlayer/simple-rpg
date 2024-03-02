@@ -36,19 +36,26 @@ const registerUser = asyncHandler(async (req,res) => {
             Health: 100,
             Level: 1,
             Experience: 0,
-            Gold : 0,
+            NeededExperience: 100,
+            Gold : 0
+        },
+        stats: {
+            Attack : 10,
+            Defense : 10,
             Sword: "none",
             Armor: "none",
-            Area : 1
+            Area : 1,
+            TimeTravels: 0
         }
     })
-
+    console.log(user)
     if(user) {
         res.status(201).json({
             _id: user._id,
             username: user.username,
             email: user.email,
             details: user.details,
+            stats: user.stats,
             token: generateToken(user._id)
         })
     } else {
@@ -72,6 +79,7 @@ const loginUser = asyncHandler(async (req,res) => {
             username: user.username,
             email: user.email,
             details: user.details,
+            stats: user.stats,
             token: generateToken(user._id)
         })
     } else {
@@ -85,11 +93,9 @@ const loginUser = asyncHandler(async (req,res) => {
 // @route   POST /api/user/details
 // @access  Public
 const updateUser = asyncHandler(async (req,res) => {
-    console.log('updating')
     const { email, details } = req.body
     await User.findOneAndUpdate({ email }, { details })
     const user = await User.findOne({email})
-    console.log(user)
     res.json({
         _id: user._id,
         username: user.username,
@@ -97,7 +103,6 @@ const updateUser = asyncHandler(async (req,res) => {
         details: user.details,
         token: generateToken(user._id)
     })
-    console.log('update done')
 })
 
 // @desc    Get user data

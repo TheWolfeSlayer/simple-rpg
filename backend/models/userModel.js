@@ -20,13 +20,17 @@ const userSchema = mongoose.Schema({
         Health : { type: Number },
         Level: { type: Number },
         Experience: { type: Number },
-        Gold : { type: Number },
+        NeededExperience: { type: Number},
+        Gold : { type: Number }
+    },
+    stats : {
+        Attack : { type: Number},
+        Defense : { type: Number },
         Sword: { type: String },
         Armor: { type: String },
         Area : { type: Number },
         TimeTravels: { type: Number },
     }
-    
 },
 {
     timestamps: true
