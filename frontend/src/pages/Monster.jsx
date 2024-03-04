@@ -37,7 +37,7 @@ function Monster() {
   const [workText, setWorkText] = useState("Work");
   const [dungeonText, setDungeonText] = useState("Dungeon");
   let huntCooldown = 3000
-  let adventureCooldown = 60000
+  let adventureCooldown = 30000
   let trainingCooldown = 20000
   let workCooldown = 20000
   let dungeonCooldown = 300000
@@ -68,6 +68,7 @@ function Monster() {
       details,
       stats
     }
+    console.log(userData)
     dispatch(update(userData))
     
   }
@@ -78,46 +79,52 @@ function Monster() {
       difficulty = 1
     } else if (command === "Adventure") {
       difficulty = 2.1
-    } else {
-      difficulty = 0
-    }
+    } 
     let baseDamage = Math.floor(Math.random() * 10) + 25
     let damageDone = (baseDamage * userArea * difficulty) - userDefense
-    let updatedHealth = userHealth - damageDone
+    let updatedHealth = Math.round(userHealth - damageDone)
     if (updatedHealth < 0) {
       setUserHealth(1)
-      return false
+    } else {
+      setUserHealth(updatedHealth)
+      calculateGold(difficulty)
+      calculateExp(difficulty)
     }
-    setUserHealth(updatedHealth)
-    return true
+    
+    
   }
 
-  const calculateGold = () => {
+  const calculateGold = (modifier) => {
     let baseGold = Math.floor(Math.random() * 5) + 10
-    let boostedGold = baseGold * userArea
-    setUserGold(userGold + boostedGold)
+    let boostedGold = baseGold * userArea * modifier
+    setUserGold(Math.round(userGold + boostedGold))
   } 
 
-  const calculateExp = () => {
+  const calculateExp = (modifier) => {
     let baseExp = Math.floor(Math.random() * 5) + 10
-    let expEarned = baseExp * userArea
-    setUserExperience(userExperience + expEarned)
+    let expEarned = baseExp * userArea * modifier
+    let newUserExperience = Math.round(userExperience + expEarned)
 
-    if (userExperience > neededExperience) {
+    if (newUserExperience > neededExperience) {
       setUserLevel(userLevel + 1)
-      setUserExperience(userExperience - neededExperience)
+      setUserExperience(newUserExperience - neededExperience)
       setNeededExperiece(neededExperience * 2.1)
       setUserMaxHealth(userMaxHealth + 5)
       setUserAttack(userAttack + 1)
       setUserDefense(userDefense + 1)
+    } else {
+      setUserExperience(newUserExperience)
     }
   }
 
   const updateStatus = (command) => {
-    if (calculateDamage(command)){
-      calculateGold()
-      calculateExp()
+    if (command === 'Hunt' || command === 'Adventure') {
+      calculateDamage(command)
+    } else {
+      calculateExp(1.3)
+      calculateGold(1.3)
     }
+   
   }
 
   const doHunt = () => {
@@ -129,20 +136,21 @@ function Monster() {
 
     if (huntText === 'Hunt' && userHealth > 0) {
       setHuntText(<Countdown date={Date.now() + huntCooldown} />);
-      
-      console.log('hunting')
       setTimeout(hunting, [huntCooldown])
     }
   }
 
   const doAdventure = () => {
     const adventuring = () => {
-      setHuntText("Adventure")
+      setAdventureText("Adventure")
       updateStatus("Adventure")
     }
 
-    setAdventureText(<Countdown date={Date.now() + adventureCooldown} />);
-    setTimeout(() => adventuring, [adventureCooldown])
+    if (adventureText === 'Adventure' && userHealth > 0) {
+      setAdventureText(<Countdown date={Date.now() + adventureCooldown} />);
+      setTimeout(adventuring, [adventureCooldown])
+    }
+    
   }
 
   const doTraining = () => {
@@ -186,7 +194,7 @@ function Monster() {
 
   const GetStatus = () => {
     updateUserData()
-    setHealthDisplay(`Health : ${userHealth} / ${user.details.MaxHealth}`)
+    setHealthDisplay(`Health : ${userHealth} / ${userMaxHealth}`)
     setGoldDisplay(`Gold : ${userGold}`)
     setExperienceDisplay(`${userExperience}XP / ${neededExperience}XP`)
     setAttackDisplay(`Attack : ${userAttack}`)

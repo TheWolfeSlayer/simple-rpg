@@ -93,8 +93,8 @@ const loginUser = asyncHandler(async (req,res) => {
 // @route   POST /api/user/details
 // @access  Public
 const updateUser = asyncHandler(async (req,res) => {
-    const { email, details } = req.body
-    await User.findOneAndUpdate({ email }, { details })
+    const { email, details, stats } = req.body
+    await User.findOneAndUpdate({ email }, { details, stats })
     const user = await User.findOne({email})
     res.json({
         _id: user._id,
