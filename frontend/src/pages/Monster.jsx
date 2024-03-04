@@ -2,7 +2,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { Button } from 'react-bootstrap'
 import Countdown from 'react-countdown';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { update } from '../features/auth/authSlice'
 
 function Monster() {
@@ -15,13 +15,18 @@ function Monster() {
   const [userLevel, setUserLevel] = useState(user.details.Level)
   const [userExperience, setUserExperience] = useState(user.details.Experience)
   const [neededExperience, setNeededExperiece] = useState(user.details.NeededExperience)
-  const [userGold, setUserGold] = useState(user.details.Gold)
   
   const [userAttack, setUserAttack] = useState(user.stats.Attack)
   const [userDefense, setUserDefense] = useState(user.stats.Defense)
   const [userSword, setUserSword] = useState(user.stats.Sword)
   const [userArmor, setUserArmor] = useState(user.stats.Armor)
   const [userArea, setUserArea] = useState(user.stats.Area)
+
+  const [userGold, setUserGold] = useState(user.inventory.Gold)
+  const [userWoodCount, setUserWoodCount] = useState(user.inventory.Wood)
+  const [userFishCount, setUserFishCount] = useState(user.inventory.Fish)
+  const [userAppleCount, setUserAppleCount] = useState(user.inventory.Apple)
+  const [userRubyCount, setUserRubyCount] = useState(user.inventory.Ruby)
 
   const [healthDisplay, setHealthDisplay] = useState(`Health : ${userHealth} / ${user.details.MaxHealth}`)
   const [goldDisplay, setGoldDisplay] = useState(`Gold : ${userGold}`)
@@ -30,6 +35,10 @@ function Monster() {
   const [defenseDisplay, setDefenseDisplay] = useState(`Defense : ${userDefense}`)
   const [swordDisplay, setSwordDisplay] = useState(`${userSword}`)
   const [armorDisplay, setArmorDisplay] = useState(`${userArmor}`)
+  const [woodDisplay, setWoodDisplay] = useState(`Wood: ${userWoodCount}`)
+  const [fishDisplay, setFishDisplay] = useState(`Fish: ${userFishCount}`)
+  const [appleDisplay, setAppleDisplay] = useState(`Apple: ${userAppleCount}`)
+  const [rubyDisplay, setRubyDisplay] = useState(`Ruby: ${userRubyCount}`)
 
   const [huntText, setHuntText] = useState("Hunt");
   const [adventureText, setAdventureText] = useState("Adventure");
@@ -42,36 +51,7 @@ function Monster() {
   let workCooldown = 20000
   let dungeonCooldown = 300000
 
-  const updateUserData = () => {
-    const id = user.id
-    const email = user.email
-    const password = user.password
-    const details = {
-      MaxHealth: userMaxHealth,
-      Health: userHealth,
-      Level: userLevel,
-      Experience: userExperience,
-      NeededExperience: neededExperience,
-      Gold: userGold,
-    }
-    const stats = {
-      Attack : userAttack,
-      Defense : userDefense,
-      Sword : userSword,
-      Armor : userArmor,
-      Area : userArea
-    }
-    const userData = {
-      id,
-      email,
-      password,
-      details,
-      stats
-    }
-    console.log(userData)
-    dispatch(update(userData))
-    
-  }
+  
 
   const calculateDamage = (command) => {
     let difficulty = 0.1
@@ -90,8 +70,6 @@ function Monster() {
       calculateGold(difficulty)
       calculateExp(difficulty)
     }
-    
-    
   }
 
   const calculateGold = (modifier) => {
@@ -117,38 +95,62 @@ function Monster() {
     }
   }
 
+  const workCommand = () => {
+    let decision = Math.floor(Math.random() * 1000) + 1;
+
+    switch (true) {
+      case (decision <= 250) :
+        setUserWoodCount(userWoodCount + (Math.floor(Math.random() * 6) + 1))
+        break
+      case (decision <= 500) :
+        setUserFishCount(userFishCount + (Math.floor(Math.random() * 6) + 1))
+        break
+      case (decision <= 750) :
+        setUserAppleCount(userAppleCount + (Math.floor(Math.random() * 6) + 1))
+        break
+      case (decision <= 900) :
+        setUserRubyCount(userRubyCount + (Math.floor(Math.random() * 2) + 1))
+        break
+      case (decision > 900) :
+        setUserGold(userGold + (Math.floor(Math.random() * 6) + 20))
+        break
+      default :
+        console.log('work command error')
+        break
+    }
+  }
+
   const updateStatus = (command) => {
     if (command === 'Hunt' || command === 'Adventure') {
       calculateDamage(command)
-    } else {
+    } else if (command === 'Train') {
       calculateExp(1.3)
-      calculateGold(1.3)
     }
-   
   }
 
   const doHunt = () => {
     const hunting = () => {
-      setHuntText("Hunt")
       updateStatus("Hunt")
-      
+      setTimeout(() => {setHuntText("Hunt")}, [huntCooldown])
     }
 
     if (huntText === 'Hunt' && userHealth > 0) {
       setHuntText(<Countdown date={Date.now() + huntCooldown} />);
-      setTimeout(hunting, [huntCooldown])
+      // setTimeout(hunting, [huntCooldown])
+      hunting()
     }
   }
 
   const doAdventure = () => {
     const adventuring = () => {
-      setAdventureText("Adventure")
       updateStatus("Adventure")
+      setTimeout(() => {setAdventureText("Adventure")}, [adventureCooldown])
     }
 
     if (adventureText === 'Adventure' && userHealth > 0) {
       setAdventureText(<Countdown date={Date.now() + adventureCooldown} />);
-      setTimeout(adventuring, [adventureCooldown])
+      // setTimeout(adventuring, [adventureCooldown])
+      adventuring()
     }
     
   }
@@ -156,21 +158,27 @@ function Monster() {
   const doTraining = () => {
     const training = () => {
       setTrainingText("Train")
-      updateStatus()
+      updateStatus('Train')
     }
 
-    setTrainingText(<Countdown date={Date.now() + trainingCooldown} />);
-    setTimeout(() => training, [trainingCooldown])
+    if (trainingText === 'Train') {
+      setTrainingText(<Countdown date={Date.now() + trainingCooldown} />);
+      setTimeout(training, [trainingCooldown])
+    }
+    
   }
 
   const doWork = () => {
     const working = () => {
       setWorkText("Work")
-      updateStatus()
+      workCommand()
     }
-
-    setWorkText(<Countdown date={Date.now() + workCooldown} />);
-    setTimeout(() => working, [workCooldown])
+    
+    if (workText === 'Work') {
+      setWorkText(<Countdown date={Date.now() + workCooldown} />);
+      setTimeout(working, [workCooldown])
+    }
+    
   }
 
   const doDungeon = () => {
@@ -182,7 +190,7 @@ function Monster() {
     }
 
     setDungeonText(<Countdown date={Date.now() + dungeonCooldown} />);
-    setTimeout(() => dungeonDiving, [dungeonCooldown])
+    setTimeout(dungeonDiving, [dungeonCooldown])
   }
 
   const doHeal = () => {
@@ -192,48 +200,64 @@ function Monster() {
     }
   }
 
-  const GetStatus = () => {
+  
+
+  useEffect(() => {
+    const GetStatus = () => {
+      setHealthDisplay(`Health : ${userHealth} / ${userMaxHealth}`)
+      setGoldDisplay(`Gold : ${userGold}`)
+      setExperienceDisplay(`${userExperience}XP / ${neededExperience}XP`)
+      setAttackDisplay(`Attack : ${userAttack}`)
+      setDefenseDisplay(`Defense : ${userDefense}`)
+      setSwordDisplay(`${userSword}`)
+      setArmorDisplay(`${userArmor}`)
+      setWoodDisplay(`Wood: ${userWoodCount}`)
+      setFishDisplay(`Fish: ${userFishCount}`)
+      setAppleDisplay(`Apple: ${userAppleCount}`)
+      setRubyDisplay(`Ruby: ${userRubyCount}`)
+    }
+
+    const updateUserData = () => {
+      const email = user.email
+      const details = {
+        MaxHealth: userMaxHealth,
+        Health: userHealth,
+        Level: userLevel,
+        Experience: userExperience,
+        NeededExperience: neededExperience
+      }
+      const stats = {
+        Attack : userAttack,
+        Defense : userDefense,
+        Sword : userSword,
+        Armor : userArmor,
+        Area : userArea
+      }
+      const inventory = {
+        Gold: userGold,
+        Wood: userWoodCount,
+        Fish: userFishCount,
+        Apple: userAppleCount,
+        Ruby: userRubyCount
+      }
+      const userData = {
+        email,
+        details,
+        stats,
+        inventory
+      }
+      console.log(userData)
+      dispatch(update(userData))
+    }
+
     updateUserData()
-    setHealthDisplay(`Health : ${userHealth} / ${userMaxHealth}`)
-    setGoldDisplay(`Gold : ${userGold}`)
-    setExperienceDisplay(`${userExperience}XP / ${neededExperience}XP`)
-    setAttackDisplay(`Attack : ${userAttack}`)
-    setDefenseDisplay(`Defense : ${userDefense}`)
-    setSwordDisplay(`${userSword}`)
-    setArmorDisplay(`${userArmor}`)
-    return( 
-      <div className='Status-Info'>
-        <div className='level'>
-          Level : {userLevel}
-        </div>
-        <div className='health'>
-          {healthDisplay}
-        </div>
-        <div className='gold'>
-          {goldDisplay}
-        </div>
-        <div className='experience'>
-          {experienceDisplay}
-        </div>
-        <div className='attack'>
-          {attackDisplay}
-        </div>
-        <div className='defense'>
-          {defenseDisplay}
-        </div>
-        <div className='sword'>
-          {swordDisplay}
-        </div>
-        <div className='armor'>
-          {armorDisplay}
-        </div>
-      </div>
-    )
-  }
+    GetStatus()
+  }, [dispatch, neededExperience, user.email, userAppleCount, userArea, userArmor, userAttack, userDefense, userExperience, userFishCount, userGold, userHealth, userLevel, userMaxHealth, userRubyCount, userSword, userWoodCount])
 
   if(!user){
     navigate('/')
   } else {
+    
     return (
       <div className='Action-Page'>
         <div className='Actions'>
@@ -255,11 +279,50 @@ function Monster() {
           <div className='Heal Action'>
             <Button className='Heal Action-Button' onClick={doHeal}> Heal, 5 gold </Button>
           </div>
-          <div className='Shop Action-Button'>
+          <div className='Shop Action'>
             <Button className='Shop Action-Button' > Shop </Button>
           </div>
         </div>
-        <GetStatus />
+        <div className='Status-Info'>
+          <div className='level Status'>
+            Level : {userLevel}
+          </div>
+          <div className='health Status'>
+            {healthDisplay}
+          </div>
+          <div className='gold Status'>
+            {goldDisplay}
+          </div>
+          <div className='experience Status'>
+            {experienceDisplay}
+          </div>
+          <div className='attack Status'>
+            {attackDisplay}
+          </div>
+          <div className='defense Status'>
+            {defenseDisplay}
+          </div>
+          <div className='sword Status'>
+            {swordDisplay}
+          </div>
+          <div className='armor Status'>
+            {armorDisplay}
+          </div>
+          <div className='inventory Status'>
+            <div>
+              {woodDisplay}
+            </div>
+            <div>
+              {fishDisplay}
+            </div>
+            <div>
+              {appleDisplay}
+            </div>
+            <div>
+              {rubyDisplay}
+            </div>
+          </div>
+        </div>
       </div>
     )
   }

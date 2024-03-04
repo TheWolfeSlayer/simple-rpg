@@ -37,7 +37,6 @@ const registerUser = asyncHandler(async (req,res) => {
             Level: 1,
             Experience: 0,
             NeededExperience: 100,
-            Gold : 0
         },
         stats: {
             Attack : 10,
@@ -46,6 +45,13 @@ const registerUser = asyncHandler(async (req,res) => {
             Armor: "none",
             Area : 1,
             TimeTravels: 0
+        },
+        inventory: {
+            Gold: 0,
+            Wood: 0,
+            Fish: 0,
+            Apple: 0,
+            Ruby: 0
         }
     })
     console.log(user)
@@ -56,6 +62,7 @@ const registerUser = asyncHandler(async (req,res) => {
             email: user.email,
             details: user.details,
             stats: user.stats,
+            inventory: user.inventory,
             token: generateToken(user._id)
         })
     } else {
@@ -80,6 +87,7 @@ const loginUser = asyncHandler(async (req,res) => {
             email: user.email,
             details: user.details,
             stats: user.stats,
+            inventory: user.inventory,
             token: generateToken(user._id)
         })
     } else {
@@ -93,15 +101,16 @@ const loginUser = asyncHandler(async (req,res) => {
 // @route   POST /api/user/details
 // @access  Public
 const updateUser = asyncHandler(async (req,res) => {
-    const { email, details, stats } = req.body
-    await User.findOneAndUpdate({ email }, { details, stats })
-    const user = await User.findOne({email})
+    const { email, details, stats, inventory } = req.body
+    await User.findOneAndUpdate({ email }, { details, stats, inventory })
+    const user = await User.findOne({ email })
     res.json({
         _id: user._id,
         username: user.username,
         email: user.email,
         details: user.details,
         stats: user.stats,
+        inventory: user.inventory,
         token: generateToken(user._id)
     })
 })
@@ -116,7 +125,9 @@ const getMe = asyncHandler(async (req,res) => {
         id: _id,
         username,
         email,
-        details
+        details,
+        stats,
+        inventory
     })
 })
 

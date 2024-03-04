@@ -213,45 +213,14 @@ h3 {
 .health {
   background-color: rgb(146, 58, 0);
   color: white;
-  width: 12vw;
-  
-  border: #000 2px solid;
 }
 
 .gold {
   background-color: rgb(255, 226, 63);
-  border: #000 2px solid;
-  width: 12vw;
-  
+  color: black
 }
 
-.experience { 
-  border: #000 2px solid;
-  width: 12vw;
-}
-
-.attack { 
-  border: #000 2px solid;
-  width: 12vw;
-  
-}
-
-.defense {
-  border: #000 2px solid;
-  width: 12vw;
-}
-
-.sword {
-  border: #000 2px solid;
-  width: 12vw;
-}
-
-.armor {
-  border: #000 2px solid;
-  width: 12vw;
-}
-
-.level {
+.Status {
   border: #000 2px solid;
   width: 12vw;
 }
