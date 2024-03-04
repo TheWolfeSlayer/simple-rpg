@@ -9,6 +9,8 @@
 body {
   font-family: 'Poppins', sans-serif;
   height: 100vh;
+  background-color: rgb(41, 41, 41);
+  color: white;
 }
 
 a {
@@ -245,6 +247,11 @@ h3 {
 }
 
 .armor {
+  border: #000 2px solid;
+  width: 12vw;
+}
+
+.level {
   border: #000 2px solid;
   width: 12vw;
 }
