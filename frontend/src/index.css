@@ -234,7 +234,7 @@ h3 {
 }
 
 .Action-Button {
-  width: 30vw;
+  width: 25vw;
   height: 10vh;
   text-align: center;
   background-color: #555;
@@ -245,6 +245,5 @@ h3 {
 }
 
 .Status-Info {
-  flex: 50%;
-  align-content: right;
+  float: right;
 }

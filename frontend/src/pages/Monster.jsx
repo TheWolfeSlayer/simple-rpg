@@ -45,31 +45,22 @@ function Monster() {
   const [trainingText, setTrainingText] = useState("Train");
   const [workText, setWorkText] = useState("Work");
   const [dungeonText, setDungeonText] = useState("Dungeon");
+  const [healText, setHealText] = useState("Heal, 5 gold")
   let huntCooldown = 3000
   let adventureCooldown = 30000
-  let trainingCooldown = 20000
-  let workCooldown = 20000
+  let trainingCooldown = 15000
+  let workCooldown = 15000
   let dungeonCooldown = 300000
 
-  
+  const [bossHealth, setBossHealth] = useState(0)
+  const [bossMaxHealth, setBossMaxHealth] = useState(0)
+  const [dungeonButtons, setDungeonButtons] = useState([])
 
-  const calculateDamage = (command) => {
-    let difficulty = 0.1
-    if (command === "Hunt" ) {
-      difficulty = 1
-    } else if (command === "Adventure") {
-      difficulty = 2.1
-    } 
+  const calculateDamage = (difficulty) => {
     let baseDamage = Math.floor(Math.random() * 10) + 25
     let damageDone = (baseDamage * userArea * difficulty) - userDefense
     let updatedHealth = Math.round(userHealth - damageDone)
-    if (updatedHealth < 0) {
-      setUserHealth(1)
-    } else {
-      setUserHealth(updatedHealth)
-      calculateGold(difficulty)
-      calculateExp(difficulty)
-    }
+    return updatedHealth
   }
 
   const calculateGold = (modifier) => {
@@ -97,7 +88,6 @@ function Monster() {
 
   const workCommand = () => {
     let decision = Math.floor(Math.random() * 1000) + 1;
-
     switch (true) {
       case (decision <= 250) :
         setUserWoodCount(userWoodCount + (Math.floor(Math.random() * 6) + 1))
@@ -120,36 +110,41 @@ function Monster() {
     }
   }
 
-  const updateStatus = (command) => {
-    if (command === 'Hunt' || command === 'Adventure') {
-      calculateDamage(command)
-    } else if (command === 'Train') {
+  const updateStatus = (difficulty) => {
+    if (difficulty) {
+      let updatedHealth = calculateDamage(difficulty)
+      if (updatedHealth < 0) {
+        setUserHealth(1)
+      } else {
+        setUserHealth(updatedHealth)
+        calculateGold(difficulty)
+        calculateExp(difficulty)
+      }
+    } else {
       calculateExp(1.3)
     }
   }
 
   const doHunt = () => {
     const hunting = () => {
-      updateStatus("Hunt")
+      updateStatus(1)
       setTimeout(() => {setHuntText("Hunt")}, [huntCooldown])
     }
 
     if (huntText === 'Hunt' && userHealth > 0) {
       setHuntText(<Countdown date={Date.now() + huntCooldown} />);
-      // setTimeout(hunting, [huntCooldown])
       hunting()
     }
   }
 
   const doAdventure = () => {
     const adventuring = () => {
-      updateStatus("Adventure")
+      updateStatus(2.1)
       setTimeout(() => {setAdventureText("Adventure")}, [adventureCooldown])
     }
 
     if (adventureText === 'Adventure' && userHealth > 0) {
       setAdventureText(<Countdown date={Date.now() + adventureCooldown} />);
-      // setTimeout(adventuring, [adventureCooldown])
       adventuring()
     }
     
@@ -178,29 +173,99 @@ function Monster() {
       setWorkText(<Countdown date={Date.now() + workCooldown} />);
       setTimeout(working, [workCooldown])
     }
-    
   }
 
   const doDungeon = () => {
     const dungeonDiving = () => {
-      setDungeonText("Dungeon")
-      // Dungeon code here
-
-      setUserArea(userArea + 1)
+      setBossMaxHealth(300*userArea)
+      setBossHealth(300*userArea)
+      setDungeonButtons(["Light Attack", "Medium Attack", "Heavy Attack", "Heal, 50 gold", "Escape"])
+      setHuntText("Unavailable")
+      setAdventureText("Unavailable")
+      setTrainingText("Unavailable")
+      setWorkText("Unavailable")
+      setHealText("Unavailable")
     }
+    
+    if (dungeonText === 'Dungeon') {
+      setDungeonText(<Countdown date={Date.now() + dungeonCooldown} />);
+      dungeonDiving()
+      setTimeout(() => {setDungeonText("Dungeon")}, [dungeonCooldown])
+    }
+  }
 
-    setDungeonText(<Countdown date={Date.now() + dungeonCooldown} />);
-    setTimeout(dungeonDiving, [dungeonCooldown])
+  const BossHPDisplay = () => {
+    if (bossMaxHealth > 0) {
+      return(
+        <div>
+          Boss Health : {bossHealth} / {bossMaxHealth}
+        </div>
+      )
+    } else {
+      return
+    }
+  }
+
+  const resetButtons = () => {
+    setHuntText("Hunt")
+    setAdventureText("Adventure")
+    setTrainingText("Train")
+    setWorkText("Work")
+    setHealText("Heal, 5 gold")
   }
 
   const doHeal = () => {
-    if (userGold > 5 && userHealth < userMaxHealth) {
-      setUserGold(userGold-5)
-      setUserHealth(userMaxHealth)
-    }
+    if (healText === "Heal, 5 gold") {
+      if (userGold > 5 && userHealth < userMaxHealth) {
+        setUserGold(userGold-5)
+        setUserHealth(userMaxHealth)
+      }
+    } 
   }
 
-  
+  const dungeonButtonFunction = (dungeonAction) => {
+    console.log(`user chose ${dungeonAction}`)
+    const bossFightDamage = (userMultiplier, bossMultiplier) => {
+      setUserHealth(Math.round(calculateDamage(userMultiplier)))
+      if (userHealth > 0) {
+        setBossHealth(Math.round(bossHealth - userAttack*bossMultiplier))
+        if (bossHealth < 0) {
+          setUserArea(userArea + 1)
+          setDungeonButtons([])
+          resetButtons()
+        }
+      } else {
+        setDungeonButtons([])
+        setBossHealth()
+        setBossMaxHealth()
+        setUserHealth(1)
+        resetButtons()
+      }
+    }
+    switch (dungeonAction) {
+      case "Light Attack" :
+        bossFightDamage(.75, 1.5)
+        break
+      case "Medium Attack":
+        bossFightDamage(1.2, 3)
+        break
+      case "Heavy Attack":
+        bossFightDamage(1.7, 5)
+        break
+      case "Heal, 50 gold":
+        setUserHealth(userMaxHealth)
+        setUserGold(userGold - 50)
+        break
+      case "Escape":
+        setDungeonButtons([])
+        setBossHealth()
+        setBossMaxHealth()
+        resetButtons()
+        break
+      default :
+        break
+    }
+  }
 
   useEffect(() => {
     const GetStatus = () => {
@@ -215,6 +280,7 @@ function Monster() {
       setFishDisplay(`Fish: ${userFishCount}`)
       setAppleDisplay(`Apple: ${userAppleCount}`)
       setRubyDisplay(`Ruby: ${userRubyCount}`)
+      
     }
 
     const updateUserData = () => {
@@ -246,7 +312,6 @@ function Monster() {
         stats,
         inventory
       }
-      console.log(userData)
       dispatch(update(userData))
     }
 
@@ -257,7 +322,6 @@ function Monster() {
   if(!user){
     navigate('/')
   } else {
-    
     return (
       <div className='Action-Page'>
         <div className='Actions'>
@@ -277,15 +341,28 @@ function Monster() {
             <Button className='Dungeon Action-Button' onClick={doDungeon}> {dungeonText} </Button>
           </div>
           <div className='Heal Action'>
-            <Button className='Heal Action-Button' onClick={doHeal}> Heal, 5 gold </Button>
+            <Button className='Heal Action-Button' onClick={doHeal}> {healText} </Button>
           </div>
           <div className='Shop Action'>
             <Button className='Shop Action-Button' > Shop </Button>
           </div>
         </div>
+        <div className='dungeon-div'>
+          <div className='Boss-HP'>
+            <BossHPDisplay />
+          </div>
+          {dungeonButtons.map((dungeonButton) => (
+            <div className='dungeon-button'>
+              <Button key={dungeonButton} onClick={() => {dungeonButtonFunction(dungeonButton)}} > {dungeonButton} </Button>
+            </div>
+          ))}
+        </div>
         <div className='Status-Info'>
           <div className='level Status'>
             Level : {userLevel}
+          </div>
+          <div className='area Status'>
+            Area : {userArea}
           </div>
           <div className='health Status'>
             {healthDisplay}
